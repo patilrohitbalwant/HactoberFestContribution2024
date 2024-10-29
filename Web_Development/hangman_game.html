@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .word {
+            font-size: 24px;
+            letter-spacing: 5px;
+            margin: 20px;
+        }
+        .message {
+            margin: 20px;
+            font-size: 18px;
+        }
+        input {
+            width: 30px;
+            text-align: center;
+            font-size: 24px;
+        }
+        button {
+            margin-left: 10px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Hangman</h1>
+<div class="word" id="wordDisplay"></div>
+<div class="message" id="message"></div>
+<input type="text" id="letterInput" maxlength="1" />
+<button id="guessButton">Guess</button>
+<button id="resetButton">Reset</button>
+
+<script>
+    const words = ['javascript', 'hangman', 'coding', 'computer', 'developer', 'function', 'variable'];
+    let selectedWord;
+    let guessedLetters = [];
+    let attemptsLeft = 6;
+
+    function startGame() {
+        selectedWord = words[Math.floor(Math.random() * words.length)];
+        guessedLetters = [];
+        attemptsLeft = 6;
+        document.getElementById('message').textContent = '';
+        updateWordDisplay();
+    }
+
+    function updateWordDisplay() {
+        const wordDisplay = document.getElementById('wordDisplay');
+        wordDisplay.textContent = selectedWord
+            .split('')
+            .map(letter => (guessedLetters.includes(letter) ? letter : '_')).join(' ');
+        
+        if (attemptsLeft <= 0) {
+            document.getElementById('message').textContent = `Game over! The word was "${selectedWord}".`;
+        } else if (!wordDisplay.textContent.includes('_')) {
+            document.getElementById('message').textContent = 'Congratulations! You guessed the word!';
+        } else {
+            document.getElementById('message').textContent = `Attempts left: ${attemptsLeft}`;
+        }
+    }
+
+    document.getElementById('guessButton').addEventListener('click', () => {
+        const input = document.getElementById('letterInput');
+        const letter = input.value.toLowerCase();
+
+        if (letter && !guessedLetters.includes(letter)) {
+            guessedLetters.push(letter);
+            if (!selectedWord.includes(letter)) {
+                attemptsLeft--;
+            }
+            updateWordDisplay();
+        }
+
+        input.value = '';
+        input.focus();
+    });
+
+    document.getElementById('resetButton').addEventListener('click', startGame);
+
+    startGame();
+</script>
+
+</body>
+</html>
